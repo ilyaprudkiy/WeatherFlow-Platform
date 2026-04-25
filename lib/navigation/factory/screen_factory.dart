@@ -7,8 +7,8 @@ import '../../core/di/service_locator.dart';
 import '../../feature/auth/presentation/login_screen/login_screen.dart';
 import '../../feature/auth/presentation/sign_up_screen/sign_up_screen.dart';
 import '../../feature/auth/presentation/welcome_screen/welcome_screen.dart';
-import '../../feature/weather/weather_screen/cubit/weather_screen_cubit.dart';
-import '../../feature/weather/weather_screen/weather_screen.dart';
+import '../../feature/weather/presentation/weather_screen/cubit/weather_screen_cubit.dart';
+import '../../feature/weather/presentation/weather_screen/weather_screen.dart';
 
 class ScreenFactory {
   Widget loginScreen() {
@@ -37,7 +37,7 @@ class ScreenFactory {
 
   Widget getWeather(BuildContext context) {
     return BlocProvider<WeatherScreenCubit>(
-      create: (context) => WeatherScreenCubit(WeatherScreenState()),
+      create: (context) => sl<WeatherScreenCubit>(),
       child: const WeatherScreenWidget(),
     );
   }

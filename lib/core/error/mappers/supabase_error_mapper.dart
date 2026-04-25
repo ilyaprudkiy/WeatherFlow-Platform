@@ -22,9 +22,10 @@ class SupabaseErrorMapper {
       return ServerFailure(uiMes,
           debugMessage:
               '${context ?? ''} ${e.message} | ${e.details} |${e.hint}');
+    } else {
+      return UnknownFailure(('Неизвестная ошибка'),
+          debugMessage: '${context ?? ''} $e');
     }
-    return UnknownFailure(('Неизвестная ошибка'),
-        debugMessage: '${context ?? ''} $e');
   }
 
   String _authUiMessage(String raw) {

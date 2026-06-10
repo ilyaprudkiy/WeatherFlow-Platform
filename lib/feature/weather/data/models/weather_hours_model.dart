@@ -42,6 +42,13 @@ class WeatherHourItem {
     required this.iconCode,
   });
 
+  double get temperatureCelsius {
+    if (temperature > 150) return temperature - 273.15;
+    return temperature;
+  }
+
+  String get temperatureLabel => '${temperatureCelsius.round()}°';
+
   factory WeatherHourItem.fromJson(Map<String, dynamic> json) {
     final weatherList = json['weather'] as List?;
     final weather = weatherList != null && weatherList.isNotEmpty

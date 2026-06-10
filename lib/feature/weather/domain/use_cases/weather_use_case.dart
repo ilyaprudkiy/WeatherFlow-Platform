@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:weather_app/core/error/failure/failure.dart';
 import 'package:weather_app/feature/weather/domain/entity/weather_entity.dart';
+import 'package:weather_app/feature/weather/domain/entity/weather_hours_entity.dart';
 import 'package:weather_app/feature/weather/domain/repository/weather_repository.dart';
 
 class WeatherUseCase {
@@ -12,8 +13,16 @@ class WeatherUseCase {
     return repository.getWeatherByCityName(city);
   }
 
-  Future<Either<Failure, WeatherEntity>> getWeatherByGeo(
+  Future<Either<Failure, WeatherEntity>> getWeatherByGeo() {
+    return repository.getWeatherByGeo();
+  }
+
+  Future<Either<Failure, WeatherEntity>> getDefaultCityWeather() {
+    return repository.getDefaultCityWeather();
+  }
+
+  Future<Either<Failure, WeatherHoursEntity>> getWeatherHours(
       double lat, double lon) {
-    return repository.getWeatherByGeo(lat, lon);
+    return repository.getWeatherHours(lat, lon);
   }
 }

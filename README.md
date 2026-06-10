@@ -1,90 +1,120 @@
 ## Weather App (Flutter) — Work in Progress
 
-A modern Flutter weather application that provides real-time weather data, city search, and personalized weather tracking.
-## Weather App (Flutter) — Work in Progress
+A Flutter weather application I am building in my free time as a learning and portfolio project.
 
-A Flutter weather application that I am building in my free time as a learning and portfolio project.
-
-This project demonstrates my work with:
-
-- Flutter UI development
-- State management using **Bloc / Cubit**
-- Backend integration using **Supabase**
-- Working with **API data**
-- Local storage and device features
-
-The project is **actively under development**, and I plan to expand it into a fully featured application using **Clean Architecture**.
+The app shows current weather, hourly and 7-day forecasts, and includes auth via Supabase. I am gradually moving the codebase toward **Clean Architecture** and improving layer boundaries between features.
 
 ---
 
 ## Current Status
 
 ### Done
-- Start screen with options: **Sign up / Log in / Continue as guest**
-- Navigation to custom **Login** and **Sign up** screens
-- Custom UI components and layout
+
+**Auth**
+- Welcome screen (Sign up / Log in / Continue as guest)
+- Login and Sign up screens with custom UI
+- Supabase auth integration (sign up, login, logout)
+- Auth flow fixes (validation, navigation)
+
+**Weather**
+- Weather screen with hero (city image + gradient overlay)
+- Current weather card (city, temperature, feels like)
+- Metrics card (humidity, wind, UV index)
+- Hourly forecast (selectable cards)
+- 7-day forecast (container with dividers and temperature bars)
+- Monthly forecast button (UI stub, no navigation yet)
+- Custom bottom navigation bar (visual selection only)
+- Geo permission dialog → weather by location or default city
+- OpenWeather hourly/daily timeline API integration
+
+**Settings**
+- Settings screen (card-based UI)
+- Weather-related menu items (saved cities, location, forecast details, help)
+- Log out
+
+**Core**
+- GetIt service locator
+- Repository + use case pattern (auth and weather)
+- Error mapping (`Failure`, Supabase/weather mappers)
+- Named routes + `ScreenFactory`
 
 ### In Progress
-- **Supabase integration** (authentication and data flow)
 
-### Planned
+- Wiring bottom navigation tabs to real screens (search, favorites, details)
+- Connecting settings toggles to app behavior
+- Architecture cleanup (domain layer boundaries, unified error handling)
 
-- Refactor towards **Clean Architecture**
-  - introduce **use cases**
-  - improve project structure
-  - revisit naming and layering
+### Planned Next
 
-- Main **Weather screen**
-- **City search**
-- **Favorite cities** with persistent storage
-- Complete **Supabase authentication flow**
-- Optional **Pro subscription** with additional features
+See [`BACKLOG.md`](BACKLOG.md) for a detailed task breakdown (Jira-style).
+
+**Short-term**
+- Fix weather domain layer (entities independent of data models)
+- Single app-scoped `AuthCubit` lifecycle
+- City search screen
+- Saved cities with local persistence
+- Settings actions with real navigation / state
+
+**Mid-term**
+- Monthly / extended forecast screen
+- Celsius / Fahrenheit toggle
+- Weather alerts notifications
+- Dark mode
+
+**Architecture & quality**
+- Unify `Result<T>` vs `Either` across features
+- Bring settings into data/domain layers
+- Unit tests for use cases, repositories, cubits
+- Move API keys to environment config (not committed)
+- Fix `DefaultCityService` locale logic bug
+
+**Optional (later)**
+- Pro subscription / premium features
+- Guest mode polish
 
 ---
 
 ## Tech Stack
 
-**Flutter / Dart**  
-Dart SDK >= 3.3.1 < 4.0.0
+**Flutter / Dart** — SDK `>=3.3.1 <4.0.0`
 
-**State Management**
-- bloc
-- flutter_bloc
-
-**Networking**
-- http
-- weather
-
-**Formatting**
-- intl
-
-**Local Storage**
-- hive
-- hive_flutter
-- path_provider
-
-**Location**
-- geolocator
-
-**Backend**
-- supabase_flutter
-
-**UI**
-- google_fonts
-- lottie
+| Area | Packages |
+|------|----------|
+| State | bloc, flutter_bloc |
+| Networking | http |
+| Backend | supabase_flutter |
+| Location | geolocator |
+| Functional | dartz |
+| DI | get_it |
+| UI | google_fonts, lottie, weather_icons_animated, intl |
 
 ---
 
-## Assets
+## Project Structure
 
-`assets/cities_list.json` — cities list used for search functionality.
+```
+lib/
+├── core/                 # DI, config, errors, validators
+├── feature/
+│   ├── auth/             # data / domain / presentation
+│   ├── weather/          # data / domain / presentation
+│   └── settings/         # presentation (to be expanded)
+└── navigation/           # routes, ScreenFactory
+```
 
 ---
 
 ## Getting Started
 
-Clone the repository and run:
-
 ```bash
 flutter pub get
 flutter run
+```
+
+**Note:** API keys for OpenWeather and Supabase are currently in `lib/core/config/configuration/configuration.dart`. I plan to move them to a local env setup before public release.
+
+---
+
+## Branch
+
+Active development: `feature/weather-flow`

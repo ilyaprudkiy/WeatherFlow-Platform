@@ -9,6 +9,9 @@ import 'package:weather_app/feature/auth/data/repositories/auth_repository_impl.
 import 'package:weather_app/feature/auth/domain/repository/auth_repository.dart';
 import 'package:weather_app/feature/auth/domain/use_cases/auth_use_cases.dart';
 import 'package:weather_app/feature/weather/data/api_client/weather_api_client.dart';
+import 'package:weather_app/feature/weather/data/data_sources/services/default_city_service.dart';
+import 'package:weather_app/feature/weather/data/data_sources/services/location_service.dart';
+import 'package:weather_app/feature/weather/data/data_sources/services/location_service_impl.dart';
 import 'package:weather_app/feature/weather/data/data_sources/weather_remote_data_source.dart';
 import 'package:weather_app/feature/weather/data/data_sources/weather_remote_data_source_impl.dart';
 import 'package:weather_app/feature/weather/data/repositories/weather_repository_impl.dart';
@@ -23,6 +26,10 @@ Future<void> initServiceLocator() async {
   sl.registerFactory<AuthCubit>(() => AuthCubit(
         sl<AuthUseCase>(),
       ));
+  sl.registerFactory<WeatherScreenCubit>(() => WeatherScreenCubit(
+    sl<WeatherUseCase>(),
+  ));
+
 
   sl.registerLazySingleton<AuthUseCase>(
       () => AuthUseCase(sl<AuthRepository>(), sl<AuthValidator>()));
@@ -37,16 +44,21 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton(() => SupabaseClientProvider());
   sl.registerLazySingleton(() => SupabaseErrorMapper());
 
-  sl.registerFactory<WeatherScreenCubit>(() => WeatherScreenCubit(
-        sl<WeatherUseCase>(),
-      ));
+
   sl.registerLazySingleton<WeatherUseCase>(() => WeatherUseCase(
         sl<WeatherRepository>(),
       ));
   sl.registerLazySingleton<WeatherRepository>(() => WeatherRepositoryImpl(
-      sl<WeatherRemoteDataSource>(), sl<WeatherErrorMapper>()));
+      sl<WeatherRemoteDataSource>(),
+      sl<WeatherErrorMapper>(),
+      sl<LocationService>(),
+      sl<DefaultCityService>()));
+
+
   sl.registerLazySingleton<WeatherRemoteDataSource>(
       () => WeatherRemoteDataSourceImpl(sl<WeatherApiClient>()));
+  sl.registerLazySingleton<LocationService>(() => LocationServiceImpl());
   sl.registerLazySingleton(() => WeatherErrorMapper());
   sl.registerLazySingleton(() => WeatherApiClient());
+  sl.registerLazySingleton(() => DefaultCityService());
 }

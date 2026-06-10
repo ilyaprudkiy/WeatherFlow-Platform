@@ -39,6 +39,8 @@ class WeatherDailyItem {
   final int windDeg;
   final int clouds;
   final double rain;
+  final String iconCode;
+  final double uvi;
 
   WeatherDailyItem({
     required this.date,
@@ -55,11 +57,28 @@ class WeatherDailyItem {
     required this.windDeg,
     required this.clouds,
     required this.rain,
+    required this.iconCode,
+    required this.uvi,
   });
+
+  double get minCelsius => _toCelsius(minTemp);
+  double get maxCelsius => _toCelsius(maxTemp);
+
+  String get minLabel => '${minCelsius.round()}°';
+  String get maxLabel => '${maxCelsius.round()}°';
+
+  static double _toCelsius(double value) {
+    if (value > 150) return value - 273.15;
+    return value;
+  }
 
   factory WeatherDailyItem.fromJson(Map<String, dynamic> json) {
     final temp = json['temp'] as Map<String, dynamic>? ?? {};
     final feelsLike = json['feels_like'] as Map<String, dynamic>? ?? {};
+    final weatherList = json['weather'] as List?;
+    final weather = weatherList != null && weatherList.isNotEmpty
+        ? weatherList.first as Map<String, dynamic>
+        : null;
 
     return WeatherDailyItem(
       date: DateTime.fromMillisecondsSinceEpoch(
@@ -82,6 +101,8 @@ class WeatherDailyItem {
       windDeg: ((json['wind_deg'] ?? 0) as num).round(),
       clouds: ((json['clouds'] ?? 0) as num).round(),
       rain: ((json['rain'] ?? 0) as num).toDouble(),
+      iconCode: weather?['icon']?.toString() ?? '01d',
+      uvi: ((json['uvi'] ?? 0) as num).toDouble(),
     );
   }
 }

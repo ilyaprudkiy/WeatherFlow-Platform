@@ -39,4 +39,36 @@ class WeatherEntity {
       required this.lon,
       required this.temMax,
       required this.temMin});
+
+  double get temperatureCelsius {
+    return (temperature - 273.15);
+  }
+
+  double get minTemperature {
+    return (temMin - 273.15);
+  }
+
+  double get maxTemperature {
+    return (temMax - 273.15);
+  }
+
+  double get feelsTemperature {
+    return(feelsLike - 273.15);
+  }
+
+  String get minTemperatureRound {
+    return '${minTemperature.round()}';
+  }
+
+  String get maxTemperatureRound {
+    return '${maxTemperature.round()}';
+  }
+
+  String get feelsTemperatureRound {
+    return '${feelsTemperature.round()}°';
+  }
+
+  String get temperatureRound {
+    return '${temperatureCelsius.round()}°';
+  }
 }

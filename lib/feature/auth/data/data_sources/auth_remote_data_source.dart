@@ -8,4 +8,4 @@ abstract class AuthRemoteDataSource {
   Future<void> logout();
 
   Session? get getCurrentSession;
-}
+ }

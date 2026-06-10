@@ -7,7 +7,8 @@ class EmailValidator {
       return ValidationFailure('The email field is empty',
           debugMessage: context ?? '');
     }
-    final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$');
+    final emailRegex =  RegExp(
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
     if (!emailRegex.hasMatch(trimmedEmail)) {
       return ValidationFailure('not correct email',
           debugMessage: context ?? '');

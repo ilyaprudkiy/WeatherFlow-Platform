@@ -36,63 +36,62 @@ class _SignUpScreenWidgetState extends State<SignUpScreenWidget> {
         backgroundColor: Colors.white,
         body: CustomPaint(
           painter: BackgroundPainter(),
-            child: Stack(
-              children: [
-                BlocConsumer<AuthCubit, AuthState>(
-                  listener: _onChangeSignUpState,
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Positioned(
-                            height: 70,
-                            top: 200,
-                            right: 100,
-                            child: TextCreateAccountWidget()),
-                        AppButtonTextField(
-                          controller: _emailController,
-                          color: Colors.cyan,
-                          hintText: 'Email',
-                          icon: Icons.email,
-                          prefixIconColor: Colors.blue.shade800,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        AppButtonTextField(
-                          controller: _passwordController,
-                          color: Colors.cyan,
-                          hintText: 'Password',
-                          icon: Icons.lock_open_outlined,
-                          prefixIconColor: Colors.blue.shade800,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        AppButtonTextField(
-                          controller: _repeatPasswordController,
-                          color: Colors.blueAccent,
-                          hintText: 'Repeat password',
-                          icon: Icons.password_outlined,
-                          prefixIconColor: Colors.blue.shade800,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Positioned(
-                            child: ButtonSignUpWidget(
-                          email: _emailController,
-                          password: _passwordController,
-                          repeatPassword: _repeatPasswordController,
-                        )),
-                      ],
-                    );
-                  },
-                )
-              ],
-            ),
-
+          child: Stack(
+            children: [
+              BlocConsumer<AuthCubit, AuthState>(
+                listener: _onChangeSignUpState,
+                builder: (context, state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Positioned(
+                          height: 70,
+                          top: 200,
+                          right: 100,
+                          child: TextCreateAccountWidget()),
+                      AppButtonTextField(
+                        controller: _emailController,
+                        color: Colors.cyan,
+                        hintText: 'Email',
+                        icon: Icons.email,
+                        prefixIconColor: Colors.blue.shade800,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      AppButtonTextField(
+                        controller: _passwordController,
+                        color: Colors.cyan,
+                        hintText: 'Password',
+                        icon: Icons.lock_open_outlined,
+                        prefixIconColor: Colors.blue.shade800,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      AppButtonTextField(
+                        controller: _repeatPasswordController,
+                        color: Colors.blueAccent,
+                        hintText: 'Repeat password',
+                        icon: Icons.password_outlined,
+                        prefixIconColor: Colors.blue.shade800,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Positioned(
+                          child: ButtonSignUpWidget(
+                        email: _emailController,
+                        password: _passwordController,
+                        repeatPassword: _repeatPasswordController,
+                      )),
+                    ],
+                  );
+                },
+              )
+            ],
+          ),
         ));
   }
 
@@ -158,8 +157,8 @@ class ButtonSignUpWidget extends StatelessWidget {
 
   const ButtonSignUpWidget(
       {super.key,
-      required this.password,
       required this.email,
+      required this.password,
       required this.repeatPassword});
 
   @override
@@ -174,7 +173,7 @@ class ButtonSignUpWidget extends StatelessWidget {
         ),
         child: ElevatedButton(
             onPressed: () {
-              cubit.signUp(password.text, email.text, repeatPassword.text);
+              cubit.signUp(email.text, password.text, repeatPassword.text);
             },
             child: Text('Sign up',
                 style: GoogleFonts.poppins(

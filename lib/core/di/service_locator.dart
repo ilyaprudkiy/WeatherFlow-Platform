@@ -27,8 +27,8 @@ Future<void> initServiceLocator() async {
         sl<AuthUseCase>(),
       ));
   sl.registerFactory<WeatherScreenCubit>(() => WeatherScreenCubit(
-    sl<WeatherUseCase>(),
-  ));
+        sl<WeatherUseCase>(),
+      ));
 
 
   sl.registerLazySingleton<AuthUseCase>(

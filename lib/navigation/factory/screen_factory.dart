@@ -50,7 +50,7 @@ class ScreenFactory {
       return BlocProvider<AuthCubit>(
         create: (context) => sl<AuthCubit>(),
         lazy: false,
-        child: SettingsScreen(),
+        child: const SettingsScreen(),
       );
     }
   }

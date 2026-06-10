@@ -1,9 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:weather_app/core/config/configuration/configuration.dart';
+import 'package:weather_app/feature/weather/data/models/weather_daily_forecast_model.dart';
 import 'package:weather_app/feature/weather/data/models/weather_model.dart';
-
-
+import 'package:weather_app/feature/weather/data/models/weather_hours_model.dart';
 
 class WeatherApiClient {
   Future<WeatherModel> getWeatherDataCityName(String city) async {
@@ -27,6 +27,36 @@ class WeatherApiClient {
       final res = await http.get(url);
       if (res.statusCode == 200) {
         return WeatherModel.fromJson(
+            convert.jsonDecode(res.body) as Map<String, dynamic>);
+      } else {
+        throw Exception('StatusCode: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<WeatherHoursModel> getWeatherHours(double lat, double lon) async {
+    try {
+      final url = Uri.parse(Configuration.weatherHours(lat: lat, lon: lon));
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        return WeatherHoursModel.fromJson(
+            convert.jsonDecode(res.body) as Map<String, dynamic>);
+      } else {
+        throw Exception('StatusCode: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<WeatherDailyForecastModel> getWeatherDays(double lat, double lon) async {
+    try {
+      final url = Uri.parse(Configuration.weatherDaily(lat: lat, lon: lon));
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        return WeatherDailyForecastModel.fromJson(
             convert.jsonDecode(res.body) as Map<String, dynamic>);
       } else {
         throw Exception('StatusCode: ${res.statusCode}');

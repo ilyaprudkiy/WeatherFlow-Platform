@@ -46,8 +46,6 @@ The app shows current weather, hourly and 7-day forecasts, and includes auth via
 
 ### Planned Next
 
-See [`BACKLOG.md`](BACKLOG.md) for a detailed task breakdown (Jira-style).
-
 **Short-term**
 - Fix weather domain layer (entities independent of data models)
 - Single app-scoped `AuthCubit` lifecycle

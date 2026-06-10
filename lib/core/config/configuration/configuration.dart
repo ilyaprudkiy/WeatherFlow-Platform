@@ -17,5 +17,5 @@ class Configuration {
       'https://api.openweathermap.org/data/4.0/onecall/timeline/1h?lat=$lat&lon=$lon&appid=$apiKey';
 
   static String weatherDaily({required double lat, required double lon}) =>
-      'https://api.openweathermap.org/data/4.0/onecall/timeline/1day?lat=$lat&lon=$lon.4050&appid=$apiKey';
+      'https://api.openweathermap.org/data/4.0/onecall/timeline/1day?lat=$lat&lon=$lon&appid=$apiKey';
 }

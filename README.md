@@ -6,6 +6,22 @@ The app shows current weather, hourly and 7-day forecasts, and includes auth via
 
 ---
 
+## Screenshots
+
+**Auth**
+
+| Welcome | Login | Sign up |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/welcome.png" width="220" alt="Welcome screen" /> | <img src="docs/screenshots/login.png" width="220" alt="Login screen" /> | <img src="docs/screenshots/sign_up.png" width="220" alt="Sign up screen" /> |
+
+**Weather & settings**
+
+| Main weather | Settings | Location permission |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/weather.png" width="220" alt="Weather screen with hourly forecast" /> | <img src="docs/screenshots/settings.png" width="220" alt="Settings screen" /> | <img src="docs/screenshots/location_permission.png" width="220" alt="Location permission dialog" /> |
+
+---
+
 ## Current Status
 
 ### Done

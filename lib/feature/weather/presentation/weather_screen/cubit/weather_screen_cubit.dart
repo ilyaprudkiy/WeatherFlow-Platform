@@ -96,7 +96,7 @@ class WeatherScreenCubit extends Cubit<WeatherScreenState> {
     }
   }
 
-  void closNotificationWindow() {
+  void closeNotificationWindow() {
     emit(state.copyWith(showNotificationWindow: false));
   }
 

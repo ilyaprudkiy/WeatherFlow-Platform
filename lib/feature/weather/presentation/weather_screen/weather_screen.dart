@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_app/core/navigation/auth_navigation.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
+import 'package:weather_app/core/widgets/app_snackbar.dart';
 import 'package:weather_app/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/app_bar_widget.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/card_current_weather.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/daily_forecast_widget.dart';
+import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/geo_permission_dialog.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/gradient_weather_screen_widget.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/hourly_forecast_widget.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/monthly_forecast_button.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/weather_bottom_nav_bar.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/widgets/weather_metrics_card_widget.dart';
-import 'package:weather_app/navigation/navigation.dart';
 import '../../../../core/add_images/images.dart';
 import 'cubit/weather_screen_cubit.dart';
 
@@ -26,13 +28,11 @@ class WeatherScreenWidget extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is NotAuthorizedState) {
-          Navigator.of(context).pushReplacementNamed(
-            MainNavigationRouteNames.welcomeScreen,
-          );
+          navigateToWelcome(context);
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.scaffold,
         bottomNavigationBar: const WeatherBottomNavBar(),
         body: SafeArea(
           child: BlocConsumer<WeatherScreenCubit, WeatherScreenState>(
@@ -41,11 +41,9 @@ class WeatherScreenWidget extends StatelessWidget {
                 (curr.error != null && curr.error != prev.error),
             listener: (context, state) {
               if (state.showNotificationWindow) {
-                _showGeoDialog(context, weatherCubit);
+                showGeoPermissionDialog(context, weatherCubit);
               } else if (state.error != null && state.currentWeather != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.error!)),
-                );
+                context.showAppSnackBar(state.error!);
               }
             },
             builder: (context, state) {
@@ -114,7 +112,7 @@ class WeatherScreenWidget extends StatelessWidget {
                           SizedBox(height: 24),
                           DailyForecastWidget(),
                           SizedBox(height: 20),
-                          const MonthlyForecastButton(),
+                          MonthlyForecastButton(),
                         ],
                       ),
                     ),
@@ -124,66 +122,6 @@ class WeatherScreenWidget extends StatelessWidget {
             },
           ),
         ),
-      ),
-    );
-  }
-
-  void _showGeoDialog(BuildContext context, WeatherScreenCubit weatherCubit) {
-    showDialog<void>(
-      barrierDismissible: false,
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Geodata request'),
-        content: const Text(
-          'Do you give permission to receive your geodata?',
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  weatherCubit.getWeatherByGeo();
-                },
-                child: const Text('Yes'),
-              ),
-              const SizedBox(width: 12),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  weatherCubit.getDefaultCityWeather();
-                },
-                child: const Text('No'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class TemperatureWidget extends StatelessWidget {
-  final String? temp;
-
-  const TemperatureWidget({super.key, required this.temp});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      temp ?? '',
-      style: GoogleFonts.aBeeZee(
-        color: Colors.white,
-        fontSize: 64,
-        fontWeight: FontWeight.w400,
-        height: 1,
       ),
     );
   }

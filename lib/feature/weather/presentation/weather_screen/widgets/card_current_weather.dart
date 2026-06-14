@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_app/core/theme/app_text_styles.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/utils/weather_icon_helper.dart';
 import '../cubit/weather_screen_cubit.dart';
-import '../weather_screen.dart';
+import 'temperature_widget.dart';
 
 class CardCurrentWeatherWidget extends StatelessWidget {
   final String? cityName;
@@ -35,27 +35,17 @@ class CardCurrentWeatherWidget extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               cityName ?? weather.cityName,
-              style: GoogleFonts.abrilFatface(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: 18,
-              ),
+              style: AppTextStyles.weatherCity,
             ),
           ],
         ),
         const SizedBox(height: 4),
-        Text(
-          description,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
-        ),
+        Text(description, style: AppTextStyles.weatherCaption),
         const SizedBox(height: 8),
         TemperatureWidget(temp: weather.temperatureRound),
         Text(
           'Feels like ${weather.feelsTemperatureRound}',
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
+          style: AppTextStyles.weatherCaption,
         ),
       ],
     );

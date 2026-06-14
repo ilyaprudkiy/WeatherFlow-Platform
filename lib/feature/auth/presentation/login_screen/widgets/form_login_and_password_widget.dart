@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/buttons/app_buttons.dart';
+import '../../../../../core/widgets/app_text_field.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class FormLoginAndPasswordWidget extends StatelessWidget {
   const FormLoginAndPasswordWidget(
@@ -13,21 +14,19 @@ class FormLoginAndPasswordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppButtonTextField(
-            controller: loginTextFieldController,
-            color: Colors.white,
-            hintText: 'Login',
-            icon: Icons.perm_identity_outlined,
-            prefixIconColor: Colors.blueAccent),
-        const SizedBox(
-          height: 15,
+        AppTextField(
+          controller: loginTextFieldController,
+          hintText: 'Email',
+          icon: Icons.perm_identity_outlined,
+          prefixIconColor: AppColors.primary,
         ),
-        AppButtonTextField(
-            controller: passwordTextFieldController,
-            color: Colors.white,
-            hintText: 'Password',
-            icon: Icons.lock_open,
-            prefixIconColor: Colors.blueAccent),
+        const SizedBox(height: 15),
+        AppTextField(
+          controller: passwordTextFieldController,
+          hintText: 'Password',
+          icon: Icons.lock_open,
+          prefixIconColor: AppColors.primary,
+        ),
       ],
     );
   }

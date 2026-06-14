@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_app/core/theme/app_text_styles.dart';
 
 class TextWelcomeWidget extends StatelessWidget {
-  const TextWelcomeWidget({
-    super.key,
-  });
+  const TextWelcomeWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,20 +18,8 @@ class TextWelcomeWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Welcome',
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontSize: 27,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade800,
-                      ),
-                    )),
-                Text('Back!',
-                    style: GoogleFonts.poppins(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800,
-                            fontSize: 20)))
+                Text('Welcome', style: AppTextStyles.authTitle()),
+                Text('Back!', style: AppTextStyles.authSubtitle()),
               ],
             ),
           )

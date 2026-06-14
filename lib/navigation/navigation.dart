@@ -3,10 +3,10 @@ import 'factory/screen_factory.dart';
 
 abstract class MainNavigationRouteNames {
   static const welcomeScreen = '/';
-  static const signUpScreen = '/sign_up_screen';
-  static const loginScreen = '/login_screen';
-  static const weatherScreen = '/weather_screen';
-  static const settingsScreen = '/weather_screen/settings_screen';
+  static const signUpScreen = '/sign_up';
+  static const loginScreen = '/login';
+  static const weatherScreen = '/weather';
+  static const settingsScreen = '/settings';
 }
 
 class MainNavigation {
@@ -14,12 +14,13 @@ class MainNavigation {
   final routes = <String, Widget Function(BuildContext)>{
     MainNavigationRouteNames.welcomeScreen: (_) =>
         _screenFactory.makeWelcomeScreen(),
-    MainNavigationRouteNames.weatherScreen: (context) =>
-        _screenFactory.getWeather(context),
-    MainNavigationRouteNames.signUpScreen: (context) =>
-        _screenFactory.signUpScreen(context),
-    MainNavigationRouteNames.loginScreen: (_) => _screenFactory.loginScreen(),
-    MainNavigationRouteNames.settingsScreen: (context) =>
-        _screenFactory.makeSettingsScreen(context)
+    MainNavigationRouteNames.weatherScreen: (_) =>
+        _screenFactory.makeWeatherScreen(),
+    MainNavigationRouteNames.signUpScreen: (_) =>
+        _screenFactory.makeSignUpScreen(),
+    MainNavigationRouteNames.loginScreen: (_) =>
+        _screenFactory.makeLoginScreen(),
+    MainNavigationRouteNames.settingsScreen: (_) =>
+        _screenFactory.makeSettingsScreen(),
   };
 }

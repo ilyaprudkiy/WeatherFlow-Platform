@@ -5,7 +5,8 @@ import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_
 import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_continue_with_widget.dart';
 import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_login_and_password_widget.dart';
 import 'package:weather_app/feature/auth/presentation/login_screen/widgets/text_welcome_widget.dart';
-import 'package:weather_app/navigation/navigation.dart';
+import 'package:weather_app/core/navigation/auth_navigation.dart';
+import 'package:weather_app/core/widgets/app_snackbar.dart';
 import '../../../../core/constant/widgets/custom_painter.dart';
 
 class LoginScreenWidget extends StatefulWidget {
@@ -100,15 +101,9 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
 
   void _changeStateScreen(BuildContext context, AuthState state) {
     if (state is AuthorizedState) {
-      Navigator.of(context)
-          .pushReplacementNamed(MainNavigationRouteNames.weatherScreen);
+      navigateToWeather(context);
     } else if (state is ErrorState) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          state.message,
-        ),
-        behavior: SnackBarBehavior.floating,
-      ));
+      context.showErrorSnackBar(state.message);
     }
   }
 }

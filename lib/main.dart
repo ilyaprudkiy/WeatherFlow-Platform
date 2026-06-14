@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:weather_app/core/config/configuration/configuration.dart';
+import 'package:weather_app/core/theme/app_theme.dart';
 import 'core/di/service_locator.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
 import 'navigation/navigation.dart';
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
       routes: mainNavigation.routes,
       initialRoute: MainNavigationRouteNames.welcomeScreen,
     );

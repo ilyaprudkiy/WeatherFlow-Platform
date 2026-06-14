@@ -7,13 +7,11 @@ abstract class AuthState {}
 
 class LoadingState extends AuthState {}
 
-class InitState extends AuthState {}
-
 class AuthorizedState extends AuthState {}
 
 class NotAuthorizedState extends AuthState {}
 
-class UnKnownState extends AuthState {}
+class UnknownState extends AuthState {}
 
 class ErrorState extends AuthState {
   final String message;
@@ -25,7 +23,7 @@ class ErrorState extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   final AuthUseCase useCase;
 
-  AuthCubit(this.useCase) : super(UnKnownState()) {
+  AuthCubit(this.useCase) : super(UnknownState()) {
     Future.microtask(_onState);
   }
 

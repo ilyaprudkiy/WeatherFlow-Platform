@@ -23,13 +23,12 @@ import '../../feature/auth/presentation/cubit/auth_cubit.dart';
 final sl = GetIt.instance;
 
 Future<void> initServiceLocator() async {
-  sl.registerFactory<AuthCubit>(() => AuthCubit(
-        sl<AuthUseCase>(),
-      ));
-  sl.registerFactory<WeatherScreenCubit>(() => WeatherScreenCubit(
-        sl<WeatherUseCase>(),
-      ));
-
+  sl.registerLazySingleton<AuthCubit>(
+    () => AuthCubit(sl<AuthUseCase>()),
+  );
+  sl.registerFactory<WeatherScreenCubit>(
+    () => WeatherScreenCubit(sl<WeatherUseCase>()),
+  );
 
   sl.registerLazySingleton<AuthUseCase>(
       () => AuthUseCase(sl<AuthRepository>(), sl<AuthValidator>()));
@@ -44,7 +43,6 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton(() => SupabaseClientProvider());
   sl.registerLazySingleton(() => SupabaseErrorMapper());
 
-
   sl.registerLazySingleton<WeatherUseCase>(() => WeatherUseCase(
         sl<WeatherRepository>(),
       ));
@@ -53,7 +51,6 @@ Future<void> initServiceLocator() async {
       sl<WeatherErrorMapper>(),
       sl<LocationService>(),
       sl<DefaultCityService>()));
-
 
   sl.registerLazySingleton<WeatherRemoteDataSource>(
       () => WeatherRemoteDataSourceImpl(sl<WeatherApiClient>()));

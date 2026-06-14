@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/core/theme/app_decorations.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/cubit/weather_screen_cubit.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/utils/weather_icon_helper.dart';
 import 'package:weather_icons_animated/weather_icons_animated.dart';
@@ -18,13 +19,7 @@ class WeatherMetricsCardWidget extends StatelessWidget {
     return Container(
       height: 72,
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFF3D5873).withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF3D5873).withValues(alpha: 0.65),
-        ),
-      ),
+      decoration: AppDecorations.weatherMetricsCard,
       child: Row(
         children: [
           Expanded(

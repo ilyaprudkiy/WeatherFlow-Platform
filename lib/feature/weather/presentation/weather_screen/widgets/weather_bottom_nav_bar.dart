@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
 
 const _barColor = Color(0xB33D5873);
-const _selectedBlue = Colors.blueAccent;
-const _inactiveBlue = Color(0xFFB8C9D9);
+const _selectedBlue = AppColors.primary;
+const _inactiveBlue = AppColors.bottomNavInactive;
 
 class WeatherBottomNavBar extends StatefulWidget {
   const WeatherBottomNavBar({super.key});

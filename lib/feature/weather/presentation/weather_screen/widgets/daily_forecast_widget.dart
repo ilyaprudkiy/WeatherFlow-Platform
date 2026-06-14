@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
+import 'package:weather_app/core/theme/app_decorations.dart';
+import 'package:weather_app/core/widgets/section_header.dart';
 import 'package:weather_app/feature/weather/data/models/weather_daily_forecast_model.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/cubit/weather_screen_cubit.dart';
 import 'package:weather_app/feature/weather/presentation/weather_screen/utils/weather_icon_helper.dart';
@@ -15,26 +18,7 @@ class DailyForecastWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '7-Day Forecast',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'See all',
-                style: TextStyle(color: Colors.blueAccent, fontSize: 14),
-              ),
-            ),
-          ],
-        ),
+        const SectionHeader(title: '7-Day Forecast'),
         const SizedBox(height: 12),
         if (days.isEmpty)
           const SizedBox(
@@ -43,18 +27,7 @@ class DailyForecastWidget extends StatelessWidget {
           )
         else
           Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F7FA),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFFE3EBF3)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
+            decoration: AppDecorations.forecastListCard,
             child: Column(
               children: List.generate(
                 days.length.clamp(0, 7),
@@ -173,7 +146,10 @@ class _DailyRow extends StatelessWidget {
                         height: 4,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF4FC3F7), Color(0xFF1565C0)],
+                            colors: [
+                              AppColors.forecastBarStart,
+                              AppColors.forecastBarEnd,
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(4),
                         ),

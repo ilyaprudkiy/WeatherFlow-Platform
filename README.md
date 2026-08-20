@@ -1,159 +1,121 @@
-## WeatherFlow (Flutter) — Work in Progress
+# WeatherFlow
 
-A Flutter weather application I am building in my free time as a learning and portfolio project.
+Flutter weather app — portfolio / learning project with **Clean Architecture**, Supabase auth, and a dark **glass** auth UI.
 
-The app shows current weather, hourly and 7-day forecasts, and includes auth via Supabase. Branding and auth screens follow the **WeatherFlow** dark glass UI. I am gradually moving the codebase toward **Clean Architecture** and improving layer boundaries between features.
-
----
-
-## Screenshots
-
-**Auth — WeatherFlow glass UI (updated)**
-
-| Welcome | Login | Sign up |
-|:---:|:---:|:---:|
-| <img src="docs/screenshots/welcome.png" width="220" alt="WeatherFlow welcome screen" /> | <img src="docs/screenshots/login.png" width="220" alt="WeatherFlow login screen" /> | <img src="docs/screenshots/sign_up.png" width="220" alt="WeatherFlow sign up screen" /> |
-
-- **Welcome** — full-bleed night city background, WeatherFlow wordmark, brand icon, Log in / Sign up CTAs, social row, Continue as guest  
-- **Login** — glass email/password fields, Forgot password, primary Log in button, social continue, link to Sign up  
-- **Sign up** — full name / email / password / confirm, Terms checkbox, Create account CTA, social continue, link to Log in  
-
-**Weather & settings**
-
-| Main weather | Settings | Location permission |
-|:---:|:---:|:---:|
-| <img src="docs/screenshots/weather.png" width="220" alt="Weather screen with hourly forecast" /> | <img src="docs/screenshots/settings.png" width="220" alt="Settings screen" /> | <img src="docs/screenshots/location_permission.png" width="220" alt="Location permission dialog" /> |
+Current weather · hourly & 7-day forecast · city search · guest & email auth
 
 ---
 
-## Recent changes (WeatherFlow auth + shell)
+## Auth screens (WeatherFlow glass UI)
 
-- Redesigned **Welcome / Login / Sign up** with dark atmospheric backgrounds and shared glass widgets (`AuthScaffold`, `AuthGlassField`, `AuthGlassButton`, `AuthSocialRow`)
-- Added WeatherFlow brand assets (icon, welcome/login backgrounds, social icons)
-- Welcome route normalized (`/welcome`); guest and success auth navigate into the weather flow
-- Added **city search** feature (domain / data / presentation + cubit)
-- Added **WeatherMainShell** with bottom navigation wired to weather + city search tabs
-- GetIt registrations for city search use case / repository / cubit
+<p align="center">
+  <img src="docs/screenshots/welcome.png" width="240" alt="Welcome" />
+  &nbsp;
+  <img src="docs/screenshots/login.png" width="240" alt="Login" />
+  &nbsp;
+  <img src="docs/screenshots/sign_up.png" width="240" alt="Sign up" />
+</p>
+
+| Screen | What’s new |
+|--------|------------|
+| **Welcome** | Full-bleed night city background, WeatherFlow wordmark, brand sun/cloud icon, Log in / Sign up CTAs, Google · Instagram · Facebook row, Continue as guest |
+| **Login** | Glass email & password fields, show/hide password, Forgot password, primary Log in button, social continue, link to Sign up |
+| **Sign up** | Full name, email, password, confirm password, Terms & Privacy checkbox, Create account CTA, social continue, link to Log in |
+
+Shared building blocks: `AuthScaffold`, `AuthGlassField`, `AuthGlassButton`, `AuthSocialRow`.
 
 ---
 
-## Current Status
+## Weather & settings
+
+<p align="center">
+  <img src="docs/screenshots/weather.png" width="240" alt="Weather" />
+  &nbsp;
+  <img src="docs/screenshots/settings.png" width="240" alt="Settings" />
+  &nbsp;
+  <img src="docs/screenshots/location_permission.png" width="240" alt="Location permission" />
+</p>
+
+---
+
+## What’s in this update
+
+- Redesigned **Welcome / Login / Sign up** (dark atmospheric backgrounds + glass controls)
+- WeatherFlow brand assets (icon, backgrounds, social icons)
+- Auth route cleanup (`/welcome`); guest & successful auth enter the weather flow
+- **City search** feature (domain / data / presentation + Cubit)
+- **WeatherMainShell** with bottom navigation (weather + search tabs)
+- GetIt wiring for city search
+
+---
+
+## Status
 
 ### Done
+- WeatherFlow auth UI + Supabase sign up / login / logout
+- Weather hero, current conditions, metrics, hourly & 7-day forecast
+- Geo permission → location weather or default city
+- City search with recent / popular cards
+- Settings screen (incl. log out)
+- GetIt, repositories, use cases, named routes + `ScreenFactory`
 
-**Auth**
-- WeatherFlow Welcome (Log in / Sign up / social row / Continue as guest)
-- Login and Sign up with glass fields, validation, Supabase auth
-- Shared auth presentation widgets and theme tokens (`AppColors` welcome/auth palette)
-- Auth flow fixes (validation, navigation, stack clearing)
+### In progress
+- Remaining bottom-nav tabs (favorites / details placeholders)
+- Settings toggles → real app behavior
+- Domain boundaries & unified error handling (`Result` vs `Either`)
 
-**Weather**
-- Weather screen with hero (city image + gradient overlay)
-- Current weather card (city, temperature, feels like)
-- Metrics card (humidity, wind, UV index)
-- Hourly forecast (selectable cards)
-- 7-day forecast (container with dividers and temperature bars)
-- Monthly forecast button (UI stub, no navigation yet)
-- Custom bottom navigation bar inside `WeatherMainShell`
-- Geo permission dialog → weather by location or default city
-- OpenWeather hourly/daily timeline API integration
-
-**City search**
-- Search screen with recent / popular city cards
-- Cubit + repository wired through GetIt
-- Selection loads weather for the chosen city
-
-**Settings**
-- Settings screen (card-based UI)
-- Weather-related menu items (saved cities, location, forecast details, help)
-- Log out
-
-**Core**
-- GetIt service locator
-- Repository + use case pattern (auth, weather, city search)
-- Error mapping (`Failure`, Supabase/weather mappers)
-- Named routes + `ScreenFactory`
-
-### In Progress
-
-- Completing remaining bottom navigation tabs (favorites / details placeholders)
-- Connecting settings toggles to app behavior
-- Architecture cleanup (domain layer boundaries, unified error handling)
-
-### Planned Next
-
-**Short-term**
-- Fix weather domain layer (entities independent of data models)
-- Single app-scoped `AuthCubit` lifecycle
-- Saved cities with local persistence (Hive is declared; recent cities are still in-memory)
-- Settings actions with real navigation / state
-
-**Mid-term**
-- Monthly / extended forecast screen
-- Celsius / Fahrenheit toggle
-- Weather alerts notifications
-- Dark mode polish across non-auth screens
-
-**Architecture & quality**
-- Unify `Result<T>` vs `Either` across features
-- Bring settings into data/domain layers
-- Unit tests for use cases, repositories, cubits
-- Move API keys to environment config (not committed)
-- Fix `DefaultCityService` locale logic bug
-
-**Optional (later)**
-- Pro subscription / premium features
-- Real social auth providers (buttons are UI-ready)
-- Guest mode polish
+### Next
+- Domain entities free of data models · saved cities persistence · °C/°F  
+- Unit tests · move API keys to env · fix `DefaultCityService` locale bug  
+- Real social providers (buttons are UI-ready)
 
 ---
 
-## Tech Stack
-
-**Flutter / Dart** — SDK `>=3.3.1 <4.0.0`
+## Tech stack
 
 | Area | Packages |
 |------|----------|
-| State | bloc, flutter_bloc |
-| Networking | http |
-| Backend | supabase_flutter |
-| Location | geolocator |
-| Functional | dartz |
-| DI | get_it |
-| UI | google_fonts, lottie, weather_icons_animated, intl |
+| State | `bloc`, `flutter_bloc` |
+| Network | `http` |
+| Backend | `supabase_flutter` |
+| Location | `geolocator` |
+| DI | `get_it` |
+| Functional | `dartz` |
+| UI | `google_fonts`, `lottie`, `weather_icons_animated`, `intl` |
+
+SDK: `>=3.3.1 <4.0.0`
 
 ---
 
-## Project Structure
+## Structure
 
-```
+```text
 lib/
-├── core/                 # DI, config, errors, validators, theme
+├── core/            # DI, config, errors, validators, theme
 ├── feature/
-│   ├── auth/             # data / domain / presentation (WeatherFlow glass UI)
-│   ├── weather/          # data / domain / presentation + main shell
-│   ├── city_search/      # data / domain / presentation
-│   └── settings/         # presentation (to be expanded)
-└── navigation/           # routes, ScreenFactory
+│   ├── auth/        # WeatherFlow glass UI
+│   ├── weather/     # forecast UI + WeatherMainShell
+│   ├── city_search/ # search flow
+│   └── settings/
+└── navigation/      # routes, ScreenFactory
 ```
 
 ---
 
-## Getting Started
+## Run
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-**Note:** API keys for OpenWeather and Supabase are currently in `lib/core/config/configuration/configuration.dart`. I plan to move them to a local env setup before public release.
+> OpenWeather & Supabase keys currently live in  
+> `lib/core/config/configuration/configuration.dart` — will move to local env before public release.
 
 ---
 
 ## Branch
 
-Active development: `feature/weather-flow`
-
-Related feature branches (merged into weather-flow):
-- `feature/auth-glass-ui` — WeatherFlow auth redesign
-- `feature/city-search` — city search + weather shell
+Default: `master`  
+Active feature work: `feature/weather-flow`  
+(merged: `feature/auth-glass-ui`, `feature/city-search`)

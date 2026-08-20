@@ -8,6 +8,11 @@ import 'package:weather_app/feature/auth/data/data_sources/supabase_remote_data_
 import 'package:weather_app/feature/auth/data/repositories/auth_repository_impl.dart';
 import 'package:weather_app/feature/auth/domain/repository/auth_repository.dart';
 import 'package:weather_app/feature/auth/domain/use_cases/auth_use_cases.dart';
+import 'package:weather_app/feature/city_search/data/data_sources/recent_cities_local_data_source.dart';
+import 'package:weather_app/feature/city_search/data/repositories/city_search_repository_impl.dart';
+import 'package:weather_app/feature/city_search/domain/repository/city_search_repository.dart';
+import 'package:weather_app/feature/city_search/domain/use_cases/city_search_use_case.dart';
+import 'package:weather_app/feature/city_search/presentation/city_search_screen/cubit/city_search_cubit.dart';
 import 'package:weather_app/feature/weather/data/api_client/weather_api_client.dart';
 import 'package:weather_app/feature/weather/data/data_sources/services/default_city_service.dart';
 import 'package:weather_app/feature/weather/data/data_sources/services/location_service.dart';
@@ -28,6 +33,9 @@ Future<void> initServiceLocator() async {
   );
   sl.registerFactory<WeatherScreenCubit>(
     () => WeatherScreenCubit(sl<WeatherUseCase>()),
+  );
+  sl.registerFactory<CitySearchCubit>(
+    () => CitySearchCubit(sl<CitySearchUseCase>()),
   );
 
   sl.registerLazySingleton<AuthUseCase>(
@@ -51,6 +59,18 @@ Future<void> initServiceLocator() async {
       sl<WeatherErrorMapper>(),
       sl<LocationService>(),
       sl<DefaultCityService>()));
+
+  sl.registerLazySingleton<CitySearchUseCase>(
+    () => CitySearchUseCase(sl<CitySearchRepository>()),
+  );
+  sl.registerLazySingleton<CitySearchRepository>(
+    () => CitySearchRepositoryImpl(
+      sl<WeatherRepository>(),
+      sl<RecentCitiesLocalDataSource>(),
+      sl<WeatherErrorMapper>(),
+    ),
+  );
+  sl.registerLazySingleton(() => RecentCitiesLocalDataSource());
 
   sl.registerLazySingleton<WeatherRemoteDataSource>(
       () => WeatherRemoteDataSourceImpl(sl<WeatherApiClient>()));

@@ -6,8 +6,9 @@ Future<void> showGeoPermissionDialog(
   WeatherScreenCubit weatherCubit,
 ) {
   return showDialog<void>(
-    barrierDismissible: false,
     context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
     builder: (dialogContext) => AlertDialog(
       title: const Text('Geodata request'),
       content: const Text(
@@ -19,8 +20,8 @@ Future<void> showGeoPermissionDialog(
           children: [
             FilledButton(
               onPressed: () {
+                Navigator.of(dialogContext, rootNavigator: true).pop();
                 weatherCubit.closeNotificationWindow();
-                Navigator.of(dialogContext).pop();
                 weatherCubit.getWeatherByGeo();
               },
               child: const Text('Yes'),
@@ -28,8 +29,8 @@ Future<void> showGeoPermissionDialog(
             const SizedBox(width: 12),
             FilledButton(
               onPressed: () {
+                Navigator.of(dialogContext, rootNavigator: true).pop();
                 weatherCubit.closeNotificationWindow();
-                Navigator.of(dialogContext).pop();
                 weatherCubit.getDefaultCityWeather();
               },
               child: const Text('No'),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'factory/screen_factory.dart';
 
 abstract class MainNavigationRouteNames {
-  static const welcomeScreen = '/';
+  /// Start screen (Welcome). Must NOT be '/' if MaterialApp.home is used.
+  static const welcomeScreen = '/welcome';
   static const signUpScreen = '/sign_up';
   static const loginScreen = '/login';
   static const weatherScreen = '/weather';

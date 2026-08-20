@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show Supabase, User;
+import 'package:weather_app/core/navigation/auth_navigation.dart';
+import 'package:weather_app/core/widgets/app_snackbar.dart';
 import 'package:weather_app/feature/auth/presentation/cubit/auth_cubit.dart';
-import 'package:weather_app/navigation/navigation.dart';
-
-const _background = Color(0xFFF3F4F6);
-const _cardRadius = 18.0;
+import 'widgets/settings_action_card.dart';
+import 'widgets/settings_constants.dart';
+import 'widgets/settings_header.dart';
+import 'widgets/settings_weather_preferences_card.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -15,14 +17,11 @@ class SettingsScreen extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is NotAuthorizedState) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            MainNavigationRouteNames.welcomeScreen,
-            (_) => false,
-          );
+          navigateToWelcome(context);
         }
       },
       child: const Scaffold(
-        backgroundColor: _background,
+        backgroundColor: settingsBackground,
         body: _SettingsBody(),
       ),
     );
@@ -37,7 +36,7 @@ class _SettingsBody extends StatefulWidget {
 }
 
 class _SettingsBodyState extends State<_SettingsBody> {
-  bool _generalExpanded = true;
+  bool _weatherPrefsExpanded = true;
   bool _weatherAlerts = false;
   bool _darkMode = false;
   bool _useCelsius = true;
@@ -52,89 +51,37 @@ class _SettingsBodyState extends State<_SettingsBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SettingsHeader(onBack: () => Navigator.of(context).pop()),
+          SettingsHeader(onBack: () => Navigator.of(context).pop()),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                _SettingsCard(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () => setState(
-                          () => _generalExpanded = !_generalExpanded,
-                        ),
-                        borderRadius: BorderRadius.circular(_cardRadius),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(18, 18, 14, 18),
-                          child: Row(
-                            children: [
-                              const Text(
-                                'Weather Preferences',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const Spacer(),
-                              Icon(
-                                _generalExpanded
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                color: Colors.black54,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (_generalExpanded) ...[
-                        const _CardDivider(),
-                        _ProfileRow(name: displayName),
-                        const _CardDivider(),
-                        _SettingsLabelRow(
-                          label: 'Account',
-                          onTap: () => _showInfo(
-                            context,
-                            'Manage your email and password.',
-                          ),
-                        ),
-                        const _CardDivider(),
-                        _SettingsLabelRow(
-                          label: 'Default Location',
-                          onTap: () => _showInfo(
-                            context,
-                            'Choose how the app picks your city on launch.',
-                          ),
-                        ),
-                        const _CardDivider(),
-                        _SettingsSwitchRow(
-                          label: 'Weather Alerts',
-                          value: _weatherAlerts,
-                          onChanged: (value) =>
-                              setState(() => _weatherAlerts = value),
-                        ),
-                        const _CardDivider(),
-                        _SettingsSwitchRow(
-                          label: 'Use Celsius (°C)',
-                          value: _useCelsius,
-                          onChanged: (value) =>
-                              setState(() => _useCelsius = value),
-                        ),
-                        const _CardDivider(),
-                        _SettingsSwitchRow(
-                          label: 'Dark Mode',
-                          value: _darkMode,
-                          onChanged: (value) =>
-                              setState(() => _darkMode = value),
-                        ),
-                        const SizedBox(height: 6),
-                      ],
-                    ],
+                SettingsWeatherPreferencesCard(
+                  expanded: _weatherPrefsExpanded,
+                  displayName: displayName,
+                  weatherAlerts: _weatherAlerts,
+                  useCelsius: _useCelsius,
+                  darkMode: _darkMode,
+                  onToggleExpanded: () => setState(
+                    () => _weatherPrefsExpanded = !_weatherPrefsExpanded,
+                  ),
+                  onWeatherAlertsChanged: (value) =>
+                      setState(() => _weatherAlerts = value),
+                  onUseCelsiusChanged: (value) =>
+                      setState(() => _useCelsius = value),
+                  onDarkModeChanged: (value) =>
+                      setState(() => _darkMode = value),
+                  onAccountTap: () => _showInfo(
+                    context,
+                    'Manage your email and password.',
+                  ),
+                  onDefaultLocationTap: () => _showInfo(
+                    context,
+                    'Choose how the app picks your city on launch.',
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsActionCard(
+                SettingsActionCard(
                   icon: Icons.bookmark_outline_rounded,
                   label: 'Saved Cities',
                   onTap: () => _showInfo(
@@ -143,7 +90,7 @@ class _SettingsBodyState extends State<_SettingsBody> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsActionCard(
+                SettingsActionCard(
                   icon: Icons.location_on_outlined,
                   label: 'Location & Permissions',
                   onTap: () => _showInfo(
@@ -152,7 +99,7 @@ class _SettingsBodyState extends State<_SettingsBody> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsActionCard(
+                SettingsActionCard(
                   icon: Icons.wb_sunny_outlined,
                   label: 'Forecast Details',
                   onTap: () => _showInfo(
@@ -161,7 +108,7 @@ class _SettingsBodyState extends State<_SettingsBody> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsActionCard(
+                SettingsActionCard(
                   icon: Icons.help_outline_rounded,
                   label: 'Help & Support',
                   onTap: () => _showInfo(
@@ -170,7 +117,7 @@ class _SettingsBodyState extends State<_SettingsBody> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsActionCard(
+                SettingsActionCard(
                   icon: Icons.logout,
                   label: 'Log out',
                   onTap: () => context.read<AuthCubit>().logout(),
@@ -196,256 +143,6 @@ class _SettingsBodyState extends State<_SettingsBody> {
   }
 
   void _showInfo(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-}
-
-class _SettingsHeader extends StatelessWidget {
-  const _SettingsHeader({required this.onBack});
-
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 16, 8),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-            color: Colors.black87,
-          ),
-          const Text(
-            'Settings',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsCard extends StatelessWidget {
-  const _SettingsCard({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_cardRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-}
-
-class _ProfileRow extends StatelessWidget {
-  const _ProfileRow({required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final avatarUrl = Supabase.instance.client.auth.currentUser
-        ?.userMetadata?['avatar_url'];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 26,
-            backgroundColor: const Color(0xFFE8E8ED),
-            backgroundImage: avatarUrl is String && avatarUrl.isNotEmpty
-                ? NetworkImage(avatarUrl)
-                : null,
-            child: avatarUrl is! String || avatarUrl.isEmpty
-                ? const Icon(Icons.person, color: Colors.black45, size: 28)
-                : null,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Edit profile',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsLabelRow extends StatelessWidget {
-  const _SettingsLabelRow({
-    required this.label,
-    this.onTap,
-  });
-
-  final String label;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-              if (onTap != null)
-                Icon(Icons.chevron_right, color: Colors.grey.shade500),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsSwitchRow extends StatelessWidget {
-  const _SettingsSwitchRow({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 10, 12, 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Switch.adaptive(
-            value: value,
-            onChanged: onChanged,
-            activeTrackColor: Colors.black87,
-            inactiveTrackColor: const Color(0xFFE5E7EB),
-            inactiveThumbColor: const Color(0xFF374151),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsActionCard extends StatelessWidget {
-  const _SettingsActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SettingsCard(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(_cardRadius),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-            child: Row(
-              children: [
-                Icon(icon, size: 22, color: Colors.black87),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey.shade500,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CardDivider extends StatelessWidget {
-  const _CardDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: Colors.grey.shade200,
-    );
+    context.showAppSnackBar(message);
   }
 }

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/buttons/app_buttons.dart';
-import '../../../../navigation/navigation.dart';
-import '../cubit/auth_cubit.dart';
+import 'package:weather_app/core/navigation/auth_navigation.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
+import 'package:weather_app/core/widgets/app_snackbar.dart';
+import 'package:weather_app/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_glass_button.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_glass_field.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_social_row.dart';
+import 'package:weather_app/navigation/navigation.dart';
 
+/// Sign up screen — same glass language as Welcome / Login, no brand tile.
 class SignUpScreenWidget extends StatefulWidget {
   const SignUpScreenWidget({super.key});
 
@@ -13,175 +19,208 @@ class SignUpScreenWidget extends StatefulWidget {
 }
 
 class _SignUpScreenWidgetState extends State<SignUpScreenWidget> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _repeatPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _repeatPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: CustomPaint(
-          painter: BackgroundPainter(),
-          child: Stack(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: _onChangeSignUpState,
+      builder: (context, state) {
+        final isLoading = state is LoadingState;
+
+        return AuthScaffold(
+          title: 'Create your account',
+          subtitle: "Let's get you started.",
+          child: Column(
             children: [
-              BlocConsumer<AuthCubit, AuthState>(
-                listener: _onChangeSignUpState,
-                builder: (context, state) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Positioned(
-                          height: 70,
-                          top: 200,
-                          right: 100,
-                          child: TextCreateAccountWidget()),
-                      AppButtonTextField(
-                        controller: _emailController,
-                        color: Colors.cyan,
-                        hintText: 'Email',
-                        icon: Icons.email,
-                        prefixIconColor: Colors.blue.shade800,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      AppButtonTextField(
-                        controller: _passwordController,
-                        color: Colors.cyan,
-                        hintText: 'Password',
-                        icon: Icons.lock_open_outlined,
-                        prefixIconColor: Colors.blue.shade800,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      AppButtonTextField(
-                        controller: _repeatPasswordController,
-                        color: Colors.blueAccent,
-                        hintText: 'Repeat password',
-                        icon: Icons.password_outlined,
-                        prefixIconColor: Colors.blue.shade800,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Positioned(
-                          child: ButtonSignUpWidget(
-                        email: _emailController,
-                        password: _passwordController,
-                        repeatPassword: _repeatPasswordController,
-                      )),
-                    ],
-                  );
-                },
-              )
+              AuthGlassField(
+                controller: _nameController,
+                hintText: 'Full name',
+                icon: Icons.person_outline_rounded,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 12),
+              AuthGlassField(
+                controller: _emailController,
+                hintText: 'Email',
+                icon: Icons.mail_outline_rounded,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 12),
+              AuthGlassField(
+                controller: _passwordController,
+                hintText: 'Password',
+                icon: Icons.lock_outline_rounded,
+                obscurable: true,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 12),
+              AuthGlassField(
+                controller: _confirmPasswordController,
+                hintText: 'Confirm password',
+                icon: Icons.lock_outline_rounded,
+                obscurable: true,
+                textInputAction: TextInputAction.done,
+              ),
+              const SizedBox(height: 14),
+              _TermsCheckbox(
+                value: _acceptedTerms,
+                onChanged: (value) => setState(() => _acceptedTerms = value),
+              ),
+              const SizedBox(height: 16),
+              AuthGlassButton(
+                label: 'Create account',
+                icon: Icons.person_add_alt_1_rounded,
+                accented: true,
+                height: 48,
+                busy: isLoading,
+                onPressed: _submit,
+              ),
+              const SizedBox(height: 24),
+              const AuthSocialRow(),
+              const SizedBox(height: 22),
+              const _LoginPrompt(),
             ],
           ),
-        ));
+        );
+      },
+    );
+  }
+
+  void _submit() {
+    if (!_acceptedTerms) {
+      context.showErrorSnackBar(
+        'Please accept the Terms of Service and Privacy Policy.',
+      );
+      return;
+    }
+    context.read<AuthCubit>().signUp(
+          _emailController.text.trim(),
+          _passwordController.text,
+          _confirmPasswordController.text,
+        );
   }
 
   void _onChangeSignUpState(BuildContext context, AuthState state) {
     if (state is ErrorState) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(state.message),
-        behavior: SnackBarBehavior.floating,
-      ));
+      context.showErrorSnackBar(state.message);
     } else if (state is AuthorizedState) {
-      final nextScreen = MainNavigationRouteNames.weatherScreen;
-      Navigator.of(context).pushReplacementNamed(nextScreen);
+      navigateToWeather(context);
     }
   }
 }
 
-class TextCreateAccountWidget extends StatelessWidget {
-  const TextCreateAccountWidget({super.key});
+class _TermsCheckbox extends StatelessWidget {
+  const _TermsCheckbox({required this.value, required this.onChanged});
+
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'Create account',
-      style: GoogleFonts.poppins(
-        textStyle: const TextStyle(
-          fontSize: 27,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => onChanged(!value),
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 1, right: 8),
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: value
+                    ? AppColors.welcomeAccentBlue.withValues(alpha: 0.85)
+                    : Colors.transparent,
+                border: Border.all(
+                  color: value
+                      ? AppColors.welcomeAccentBlue
+                      : AppColors.welcomeGlassBorder,
+                  width: 1,
+                ),
+              ),
+              child: value
+                  ? const Icon(Icons.check, size: 12, color: Colors.white)
+                  : null,
+            ),
+          ),
         ),
-      ),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              style: const TextStyle(
+                color: AppColors.welcomeSubtitle,
+                fontSize: 12.5,
+                height: 1.35,
+              ),
+              children: [
+                const TextSpan(text: 'I agree to the '),
+                TextSpan(
+                  text: 'Terms of Service',
+                  style: const TextStyle(color: AppColors.welcomeAccentBlue),
+                ),
+                const TextSpan(text: ' and '),
+                TextSpan(
+                  text: 'Privacy Policy',
+                  style: const TextStyle(color: AppColors.welcomeAccentBlue),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class BackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final width = size.width;
-    final height = size.height;
-    final paint = Paint();
-
-    Path mainBackground = Path();
-    mainBackground.lineTo(width, 0);
-    mainBackground.lineTo(width, height * 0.65);
-    mainBackground.cubicTo(width * 0.8, height * 0.8, width * 0.5, height * 0.8,
-        width * 0.45, height);
-    mainBackground.lineTo(0, height);
-
-    paint.color = Colors.blue.shade800;
-    canvas.drawPath(mainBackground, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
-class ButtonSignUpWidget extends StatelessWidget {
-  final TextEditingController password;
-  final TextEditingController email;
-  final TextEditingController repeatPassword;
-
-  const ButtonSignUpWidget(
-      {super.key,
-      required this.email,
-      required this.password,
-      required this.repeatPassword});
+class _LoginPrompt extends StatelessWidget {
+  const _LoginPrompt();
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<AuthCubit>();
-    return Container(
-        height: 60,
-        width: 200,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        const Text(
+          'Already have an account? ',
+          style: TextStyle(
+            color: AppColors.welcomeSubtitle,
+            fontSize: 13,
+          ),
         ),
-        child: ElevatedButton(
-            onPressed: () {
-              cubit.signUp(email.text, password.text, repeatPassword.text);
-            },
-            child: Text('Sign up',
-                style: GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
-                ))));
+        GestureDetector(
+          onTap: () => Navigator.of(context).pushReplacementNamed(
+            MainNavigationRouteNames.loginScreen,
+          ),
+          child: const Text(
+            'Log in',
+            style: TextStyle(
+              color: AppColors.welcomeAccentBlue,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

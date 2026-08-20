@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
 
 const _barColor = Color(0xB33D5873);
-const _selectedBlue = Colors.blueAccent;
-const _inactiveBlue = Color(0xFFB8C9D9);
+const _selectedBlue = AppColors.primary;
+const _inactiveBlue = AppColors.bottomNavInactive;
 
-class WeatherBottomNavBar extends StatefulWidget {
-  const WeatherBottomNavBar({super.key});
+class WeatherBottomNavBar extends StatelessWidget {
+  const WeatherBottomNavBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
 
-  @override
-  State<WeatherBottomNavBar> createState() => _WeatherBottomNavBarState();
-}
-
-class _WeatherBottomNavBarState extends State<WeatherBottomNavBar> {
-  int _selectedIndex = 0;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
 
   static const _barHeight = 40.0;
   static const _notchWidth = 78.0;
@@ -45,17 +46,17 @@ class _WeatherBottomNavBarState extends State<WeatherBottomNavBar> {
                     children: [
                       _NavIconButton(
                         index: 0,
-                        selectedIndex: _selectedIndex,
+                        selectedIndex: selectedIndex,
                         icon: Icons.home_outlined,
                         selectedIcon: Icons.home_rounded,
-                        onTap: _select,
+                        onTap: onSelected,
                       ),
                       _NavIconButton(
                         index: 1,
-                        selectedIndex: _selectedIndex,
+                        selectedIndex: selectedIndex,
                         icon: Icons.search_rounded,
                         selectedIcon: Icons.search_rounded,
-                        onTap: _select,
+                        onTap: onSelected,
                       ),
                     ],
                   ),
@@ -67,17 +68,17 @@ class _WeatherBottomNavBarState extends State<WeatherBottomNavBar> {
                     children: [
                       _NavIconButton(
                         index: 2,
-                        selectedIndex: _selectedIndex,
+                        selectedIndex: selectedIndex,
                         icon: Icons.bookmark_outline_rounded,
                         selectedIcon: Icons.bookmark_rounded,
-                        onTap: _select,
+                        onTap: onSelected,
                       ),
                       _NavIconButton(
                         index: 3,
-                        selectedIndex: _selectedIndex,
+                        selectedIndex: selectedIndex,
                         icon: Icons.insights_outlined,
                         selectedIcon: Icons.insights_rounded,
-                        onTap: _select,
+                        onTap: onSelected,
                       ),
                     ],
                   ),
@@ -88,10 +89,6 @@ class _WeatherBottomNavBarState extends State<WeatherBottomNavBar> {
         ],
       ),
     );
-  }
-
-  void _select(int index) {
-    setState(() => _selectedIndex = index);
   }
 }
 
@@ -147,14 +144,6 @@ class _NotchedBarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final barHeight = size.height - bottomInset;
     final path = _buildBarPath(size.width, barHeight);
-
-    // canvas.drawShadow(
-    //   path,
-    //   Colors.black.withValues(alpha: 0.18),
-    //   8,
-    //   false,
-    // );
-
     canvas.drawPath(path, Paint()..color = _barColor);
   }
 
@@ -166,7 +155,6 @@ class _NotchedBarPainter extends CustomPainter {
     path.quadraticBezierTo(0, 0, _topRadius, 0);
     path.lineTo(centerX - _notchRadius - _notchSpread, 0);
 
-    // Cutout dips down into the bar; area above the curve stays empty.
     path.cubicTo(
       centerX - _notchRadius + 6,
       0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
 
 class MyCirclePainter extends CustomPainter {
   final double radius;
@@ -8,7 +9,7 @@ class MyCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    paint.color = Colors.blue.shade800;
+    paint.color = AppColors.primaryDark;
     paint.style = PaintingStyle.fill;
 
     canvas.drawCircle(Offset(size.width / 3, size.height / 3), radius, paint);
@@ -22,7 +23,7 @@ class MyCustomPaint extends StatelessWidget {
   final double? width;
   final double? height;
   final double? left;
-  final double? richt;
+  final double? right;
   final double? bottom;
   final double? top;
   final double radius;
@@ -33,7 +34,7 @@ class MyCustomPaint extends StatelessWidget {
   const MyCustomPaint({
     super.key,
     this.left,
-    this.richt,
+    this.right,
     this.bottom,
     this.top,
     required this.radius,
@@ -52,7 +53,7 @@ class MyCustomPaint extends StatelessWidget {
         left: left,
         bottom: bottom,
         top: top,
-        right: richt,
+        right: right,
         child: CustomPaint(
           painter: MyCirclePainter(radius: radius),
           size: size,

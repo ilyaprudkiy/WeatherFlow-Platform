@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/feature/auth/presentation/cubit/auth_cubit.dart';
-import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_button_login_forgot_widget.dart';
-import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_continue_with_widget.dart';
-import 'package:weather_app/feature/auth/presentation/login_screen/widgets/form_login_and_password_widget.dart';
-import 'package:weather_app/feature/auth/presentation/login_screen/widgets/text_welcome_widget.dart';
 import 'package:weather_app/core/navigation/auth_navigation.dart';
+import 'package:weather_app/core/theme/app_colors.dart';
 import 'package:weather_app/core/widgets/app_snackbar.dart';
-import '../../../../core/constant/widgets/custom_painter.dart';
+import 'package:weather_app/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_glass_button.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_glass_field.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:weather_app/feature/auth/presentation/widgets/auth_social_row.dart';
+import 'package:weather_app/navigation/navigation.dart';
 
+/// Login screen — same glass language as Welcome, no brand tile.
 class LoginScreenWidget extends StatefulWidget {
   const LoginScreenWidget({super.key});
 
@@ -21,11 +23,6 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   final _passwordController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -34,68 +31,73 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            const MyCustomPaint(
-                radius: 150,
-                size: Size(300, 300),
-                width: 10,
-                height: 10,
-                left: 20),
-            const MyCustomPaint(
-              radius: 20,
-              size: Size(150, 150),
-              left: 300,
-              top: 20,
-            ),
-            const MyCustomPaint(
-              radius: 30,
-              size: Size(200, 200),
-              left: 330,
-              top: 50,
-            ),
-            const MyCustomPaint(
-              radius: 30,
-              size: Size(200, 200),
-              left: 200,
-              top: 10,
-            ),
-            const TextWelcomeWidget(),
-            BlocConsumer<AuthCubit, AuthState>(
-                listener: _changeStateScreen,
-                builder: (context, state) {
-                  return SafeArea(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 300),
-                        child: Column(
-                          children: [
-                            FormLoginAndPasswordWidget(
-                                _emailController, _passwordController),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            FormButtonLoginForgotWidget(
-                              _emailController,
-                              _passwordController,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const FormContinueWithWidget(),
-                          ],
-                        ),
-                      ),
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: _changeStateScreen,
+      builder: (context, state) {
+        final isLoading = state is LoadingState;
+
+        return AuthScaffold(
+          title: 'Welcome back',
+          subtitle: 'Please enter your details.',
+          child: Column(
+            children: [
+              AuthGlassField(
+                controller: _emailController,
+                hintText: 'Email',
+                icon: Icons.mail_outline_rounded,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 12),
+              AuthGlassField(
+                controller: _passwordController,
+                hintText: 'Password',
+                icon: Icons.lock_outline_rounded,
+                obscurable: true,
+                textInputAction: TextInputAction.done,
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    // Forgot-password flow not wired yet — keep CTA for parity.
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.welcomeAccentBlue,
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
                     ),
-                  );
-                }),
-          ],
-        ),
-      ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              AuthGlassButton(
+                label: 'Log in',
+                icon: Icons.person_outline_rounded,
+                accented: true,
+                height: 48,
+                busy: isLoading,
+                onPressed: () => context.read<AuthCubit>().login(
+                      _emailController.text.trim(),
+                      _passwordController.text,
+                    ),
+              ),
+              const SizedBox(height: 24),
+              const AuthSocialRow(),
+              const SizedBox(height: 22),
+              const _SignUpPrompt(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -105,5 +107,39 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
     } else if (state is ErrorState) {
       context.showErrorSnackBar(state.message);
     }
+  }
+}
+
+class _SignUpPrompt extends StatelessWidget {
+  const _SignUpPrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        const Text(
+          "Don't have an account? ",
+          style: TextStyle(
+            color: AppColors.welcomeSubtitle,
+            fontSize: 13,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.of(context).pushReplacementNamed(
+            MainNavigationRouteNames.signUpScreen,
+          ),
+          child: const Text(
+            'Sign up',
+            style: TextStyle(
+              color: AppColors.welcomeAccentBlue,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -89,6 +89,16 @@ flutter:
     - assets/images/nocheck.png
     - assets/images/userAvatar.jpeg
     - assets/images/new_york_cloud.png
+    - assets/images/new_york.png
+    - assets/images/weatherflow_brand_icon.png
+    - assets/images/weatherflow_welcome_icon.png
+    - assets/images/weatherflow_login_bg.png
+    - assets/images/wf_icon_core.png
+    - assets/images/wf_cloud_float.png
+    - assets/images/weatherflow_rain_bg.png
+    - assets/images/social_google.png
+    - assets/images/social_instagram.png
+    - assets/images/social_facebook.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -86,6 +86,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      // Start = Welcome. Do not set `home` together with a '/' route.
       routes: mainNavigation.routes,
       initialRoute: MainNavigationRouteNames.welcomeScreen,
     );
